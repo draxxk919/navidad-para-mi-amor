@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Para Amor ❤️</title>
+
+<!-- Fuentes románticas -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+/* Reset y base */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:Arial, sans-serif;
+  background:#ffe6f0;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* SECCIONES */
+section{
+  width:100vw;
+  height:100vh;
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px;
+  opacity:0;
+  transition:opacity 1s ease, transform 1s ease;
+}
+section.active{display:flex;opacity:1;transform:translateY(0)}
+
+/* ESCENAS */
+#s1{background:#800033;color:white;font-family:'Great Vibes',cursive;font-size:32px}
+#s2,#s3,#s5{background:#ffd6e7;color:#b30047;font-size:22px;font-family:'Dancing Script',cursive}
+#s4,#s6{background:#ffe6f0;color:#b30047;font-family:'Dancing Script',cursive}
+#s7{background:#fff0f6;color:#b30047;font-family:'Dancing Script',cursive}
+#navidad{background:#fff7f9;color:#b30047;font-family:'Dancing Script',cursive;font-size:22px}
+
+/* BOTONES */
+button{
+  margin-top:30px;
+  padding:12px 26px;
+  border:none;
+  border-radius:30px;
+  background:#cc0066;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  transition:transform .25s ease, box-shadow .25s ease;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+button:hover{background:#ff1a8c;transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+
+/* TEXTO */
+p{max-width:740px;min-height:120px;line-height:1.6;padding:8px}
+
+/* CORAZONES */
+.corazon{
+  position:fixed;
+  top:-10px;
+  color:#ff1a75;
+  font-size:20px;
+  animation:caer linear infinite;
+  opacity:.9;
+  z-index:9999;
+  text-shadow:0 0 8px rgba(255,255,255,.6);
+}
+@keyframes caer{to{transform:translateY(110vh) rotate(360deg)}}
+
+/* LLUVIA DE PALABRAS */
+.palabra{
+  position:fixed;
+  top:-20px;
+  font-size:16px;
+  color:#ff4d94;
+  opacity:.8;
+  animation:caer linear infinite;
+  z-index:500;
+  font-family:'Dancing Script',cursive;
+}
+
+/* CARRUSEL */
+.carousel{width:100%;height:60vh;position:relative;display:flex;justify-content:center;align-items:center}
+.carousel img{
+  width:300px;
+  border-radius:20px;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  opacity:0;
+  transition:opacity 1s ease, transform 1s ease;
+  box-shadow:0 20px 40px rgba(0,0,0,.25);
+  object-fit:cover;
+}
+
+/* CONTADOR */
+#contador{margin-top:18px;font-size:18px;opacity:.9;color:#5a002b}
+
+/* CUENTA REGRESIVA */
+#regresiva{margin-top:12px;font-size:20px;color:#800033;font-weight:700}
+
+/* NEGRO FINAL */
+#fade{
+  position:fixed;inset:0;background:#050505;opacity:0;pointer-events:none;
+  transition:opacity 2.5s ease;z-index:998;
+}
+#fade.active{opacity:1}
+
+/* TEXTO FINAL */
+#finalText{
+  position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  font-size:36px;color:white;opacity:0;transform:scale(.96);text-shadow:0 0 30px rgba(255,255,255,.9);
+  transition:opacity 2.5s ease, transform 2.5s ease;z-index:999;pointer-events:none;font-family:'Great Vibes',cursive;
+}
+#mensajeFinal{font-size:42px;line-height:1.2}
+#firma{margin-top:24px;font-family:'Dancing Script',cursive;font-size:28px;opacity:0;transition:opacity 2s ease}
+
+/* ESTRELLAS */
+.star{position:fixed;width:3px;height:3px;background:white;border-radius:50%;animation:twinkle 2s infinite;z-index:997}
+@keyframes twinkle{0%,100%{opacity:0}50%{opacity:1}}
+
+/* CORAZON FINAL */
+#bigHeart{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);
+  font-size:140px;color:#ff1a75;opacity:0;z-index:1000;
+  transition:transform .8s ease, opacity .8s ease;
+}
+
+/* Gatito (imagen) */
+#kittyWrap {
+  position: fixed;
+  bottom: 8vh;
+  left: -18vw;
+  z-index: 1200;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+  display: none; /* oculto por defecto; se mostrará en la escena deseada */
+}
+#kittyImg {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+  transition: transform .18s ease;
+  display: block;
+}
+@keyframes kittyWalk {
+  0%   { transform: translateX(0) scale(.92); opacity:0; }
+  6%   { opacity:1; }
+  45%  { transform: translateX(120vw) scale(1); opacity:1; }
+  55%  { transform: translateX(120vw) scale(1); opacity:1; }
+  100% { transform: translateX(0) scale(.92); opacity:0; }
+}
+.kitty-animate { animation: kittyWalk 18s linear infinite; }
+#kittyWrap:hover #kittyImg { transform: scale(1.06); }
+@media (prefers-reduced-motion: reduce) {
+  .kitty-animate { animation: none; transform: translateX(0); opacity:1; }
+}
+
+/* Subtítulos */
+#subtitlesBar{
+  position:fixed;
+  bottom:6vh;
+  left:50%;
+  transform:translateX(-50%);
+  max-width:90%;
+  width:760px;
+  background:rgba(0,0,0,0.55);
+  color:#fff;
+  padding:10px 16px;
+  border-radius:12px;
+  font-family: 'Dancing Script', cursive;
+  font-size:20px;
+  text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  z-index:1200;
+  display:none;
+  line-height:1.3;
+}
+#subtitlesBar.hidden{display:none}
+#subToggle{
+  position:fixed;
+  bottom:calc(6vh + 64px);
+  right:18px;
+  z-index:1300;
+  background:#ff4d94;color:#fff;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+
+/* RESPONSIVE */
+@media (max-width:700px){
+  .carousel img{width:220px}
+  #mensajeFinal{font-size:28px}
+  #finalText{font-size:24px}
+  p{font-size:16px}
+  #subtitlesBar{font-size:16px;padding:8px 12px}
+  #subToggle{right:12px;bottom:calc(6vh + 56px)}
+}
+</style>
+</head>
+<body>
+
+<div id="fade"></div>
+
+<div id="finalText">
+  <div id="mensajeFinal"></div>
+  <div id="firma">— Con amor, Jimmy.</div>
+</div>
+
+<div id="bigHeart">❤</div>
+
+<!-- Gatito: reemplaza el src por el nombre de tu imagen (colócala en la misma carpeta que este HTML) -->
+<div id="kittyWrap" class="kitty-animate" aria-hidden="true">
+  <img id="kittyImg" src="hello_kitty.png" alt="gatito kawaii">
+</div>
+
+<audio id="musica" src="cancion.mp3" preload="auto"></audio>
+<audio id="latido" src="heartbeat.mp3" preload="auto"></audio>
+
+<!-- SUBTITULOS -->
+<div id="subtitlesBar" aria-live="polite" role="status"></div>
+<button id="subToggle" aria-pressed="false">Subtítulos: OFF</button>
+
+<!-- ESCENAS -->
+<section id="s1" class="active">
+  <h1>Preity…</h1>
+  <p data-text="Te conocí el 17 de diciembre del año pasado. Ese día aún no lo sabía, pero algo dentro de mí cambió para siempre. El 15 de diciembre de este año pasó algo grandioso: por fin te pude hacer la pregunta que siempre quise decirte. ¿Quieres ser mi novia? Yo te voy a respetar, amor; eres lo mejor que tengo."></p>
+  <button id="btnStart">Reproducir música ❤️</button>
+  <button id="btnContinueS1" style="display:none;margin-top:12px;background:#ff7ab6">Continuar leyendo</button>
+</section>
+
+<section id="s2">
+  <p data-text="Desde entonces, empecé a pensarte sin darme cuenta. A sonreírle a la pantalla. A esperar tus mensajes."></p>
+  <button onclick="next()">Continuar ❤️</button>
+</section>
+
+<section id="s3">
+  <p data-text="Nuestra primera cita fue el 24 de diciembre. Mientras el mundo celebraba, yo ya estaba celebrando ese momento a tu lado."></p>
+  <div id="contador"></div>
+  <div id="regresiva"></div>
+  <button onclick="next()">Seguir ❤️</button>
+</section>
+
+<section id="s4">
+  <h2>Nuestras citas 💕</h2>
+  <div class="carousel">
+    <img src="foto1.jpg" alt="foto1">
+    <img src="foto2.jpg" alt="foto2">
+    <img src="foto3.jpg" alt="foto3">
+  </div>
+  <button onclick="next()">Continuar ❤️</button>
+</section>
+
+<!-- NUEVA SECCIÓN: Mensaje de Navidad (agregada según tu pedido) -->
+<section id="navidad">
+  <h2>Feliz Navidad 🎄</h2>
+  <p data-text="Feliz Navidad, quisiera estar a tu lado para darte muchos abrazos. Te amo demasiado. No cuento con el dinero suficiente, amor; el mejor regalo que te puedo dar ahora es mi presencia. 😔💗"></p>
+  <button onclick="next()">Seguir ❤️</button>
+</section>
+
+<section id="s5">
+  <p data-text="No fue un solo momento. Fueron muchos. Pequeños, simples… pero suficientes para que mi corazón te eligiera."></p>
+  <button onclick="next()">Seguir ❤️</button>
+</section>
+
+<section id="s6">
+  <p data-text="Puede que ahora no esté a tu lado, pero estoy aquí. Pensándote. Cuidándote."></p>
+  <button onclick="next()">Continua amor ❤️</button>
+</section>
+
+<section id="s7">
+  <p data-text="Ya te lo dije varias veces amor, nunca me pienso ir. No hay nadie después de ti; tú eres mi todo, mi libro con mi historia."></p>
+  <button onclick="finalizar()">Final ❤️</button>
+</section>
+
+<script>
+/* ---------- CORAZONES (decorativos) ---------- */
+setInterval(()=>{
+  const c=document.createElement("div");
+  c.className="corazon";
+  c.innerHTML="❤";
+  c.style.left = Math.random()*100 + "vw";
+  c.style.fontSize = (14 + Math.random()*18) + "px";
+  c.style.animationDuration = (3 + Math.random()*4) + "s";
+  c.style.opacity = 0.7 + Math.random()*0.3;
+  document.body.appendChild(c);
+  setTimeout(()=>{ c.remove(); }, 7000);
+}, 350);
+
+/* ---------- LLUVIA DE PALABRAS ---------- */
+const palabras = ["Preity","amor","nosotros","siempre","15/12/2025","mi vida"];
+setInterval(()=>{
+  const p = document.createElement("div");
+  p.className = "palabra";
+  p.innerText = palabras[Math.floor(Math.random()*palabras.length)];
+  p.style.left = Math.random()*100 + "vw";
+  p.style.fontSize = (12 + Math.random()*8) + "px";
+  p.style.animationDuration = (4 + Math.random()*4) + "s";
+  p.style.opacity = 0.6 + Math.random()*0.4;
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(), 8000);
+}, 700);
+
+/* ---------- ESCENAS Y MÁQUINA DE ESCRIBIR ---------- */
+const escenas = [...document.querySelectorAll("section")];
+let escenaActual = 0;
+
+function escribir(p, speed = 36, callback){
+  const t = p.dataset.text || "";
+  p.innerHTML = "";
+  let i = 0;
+  if(!t.length){
+    if(callback) setTimeout(callback, 600);
+    return;
+  }
+  const int = setInterval(()=>{
+    p.innerHTML += t[i++] || "";
+    if(i >= t.length){
+      clearInterval(int);
+      if(callback) setTimeout(callback, 900);
+    }
+  }, speed);
+}
+
+/* Inicia la experiencia: reproduce música y escribe la primera escena.
+   No avanza automáticamente; muestra botón para continuar cuando termine. */
+const btnStart = document.getElementById("btnStart");
+const btnContinueS1 = document.getElementById("btnContinueS1");
+btnStart.addEventListener("click", ()=>{
+  const musica = document.getElementById("musica");
+  musica.currentTime = 0;
+  musica.volume = 0.9;
+  const playPromise = musica.play();
+  if(playPromise !== undefined){
+    playPromise.catch(()=>{ /* autoplay bloqueado; usuario ya hizo click, así que debería reproducir */ });
+  }
+  const p = escenas[0].querySelector("p");
+  escribir(p, 40, ()=>{ btnContinueS1.style.display = "inline-block"; });
+});
+
+/* Botón para continuar desde la primera escena */
+btnContinueS1.addEventListener("click", ()=>{ next(); });
+
+/* Avanza a la siguiente escena */
+function next(){
+  escenas[escenaActual].classList.remove("active");
+  escenaActual = Math.min(escenaActual + 1, escenas.length - 1);
+  escenas[escenaActual].classList.add("active");
+  const p = escenas[escenaActual].querySelector("p");
+  if(p) escribir(p, 36);
+  updateKittyVisibility();
+}
+
+/* ---------- CARRUSEL SIMPLE ---------- */
+let imgs = document.querySelectorAll(".carousel img");
+let idxImg = 0;
+if(imgs.length){
+  imgs.forEach(img => img.style.opacity = 0);
+  imgs[0].style.opacity = 1;
+  setInterval(()=>{
+    imgs.forEach(img => { img.style.opacity = 0; img.style.transform = "translate(-50%,-50%) scale(.98)"; });
+    imgs[idxImg].style.opacity = 1;
+    imgs[idxImg].style.transform = "translate(-50%,-50%) scale(1)";
+    idxImg = (idxImg + 1) % imgs.length;
+  }, 3200);
+}
+
+/* ---------- CONTADOR DE DÍAS DESDE FECHA INICIAL ---------- */
+const inicio = new Date("2024-12-17T00:00:00");
+function actualizarContador(){
+  const ahora = new Date();
+  const diff = Math.floor((ahora - inicio) / (1000*60*60*24));
+  const cont = document.getElementById("contador");
+  if(cont) cont.innerText = `Han pasado ${diff} días desde que todo empezó.`;
+}
+actualizarContador();
+setInterval(actualizarContador, 1000);
+
+/* ---------- CUENTA REGRESIVA AL ANIVERSARIO ---------- */
+const aniversario = new Date("2026-12-15T00:00:00");
+function actualizarRegresiva(){
+  const ahora = new Date();
+  const diff = aniversario - ahora;
+  const el = document.getElementById("regresiva");
+  if(!el) return;
+  if(diff > 0){
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    el.innerText = `Faltan ${d} días, ${h}h ${m}m ${s}s para nuestro aniversario 💕`;
+  } else {
+    el.innerText = "¡Feliz aniversario amor! 💖";
+  }
+}
+actualizarRegresiva();
+setInterval(actualizarRegresiva, 1000);
+
+/* ---------- KITTY: seguimiento de cursor y visibilidad por escena ---------- */
+const wrap = document.getElementById('kittyWrap');
+const img = document.getElementById('kittyImg');
+const followCursor = true;
+const minScreenWidthFollow = 900;
+let targetX = null, targetY = null, currentX = 0, currentY = 0;
+const ease = 0.12;
+
+function updateKittyVisibility(){
+  // Mostrar el gatito solo en la escena 4 (índice 3)
+  if(escenaActual === 3){
+    wrap.style.display = 'block';
+    // reactivar animación si no se está siguiendo el cursor
+    if(!(followCursor && window.innerWidth >= minScreenWidthFollow)) wrap.classList.add('kitty-animate');
+  } else {
+    wrap.style.display = 'none';
+    wrap.classList.add('kitty-animate');
+    wrap.style.transform = '';
+  }
+}
+
+// Seguir cursor (solo en pantallas grandes)
+if(followCursor && window.innerWidth >= minScreenWidthFollow){
+  window.addEventListener('mousemove', (e)=>{
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const pct = e.clientX / vw;
+    const extraX = (pct - 0.5) * (vw * 0.35);
+    targetX = extraX;
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const extraY = (e.clientY / vh - 0.8) * 40;
+    targetY = extraY;
+    wrap.classList.remove('kitty-animate');
+  });
+
+  function animateFollow(){
+    if(targetX !== null){
+      currentX += (targetX - currentX) * ease;
+      currentY += (targetY - currentY) * ease;
+      wrap.style.transform = `translateX(${currentX}px) translateY(${currentY}px)`;
+    }
+    requestAnimationFrame(animateFollow);
+  }
+  animateFollow();
+
+  window.addEventListener('mouseleave', ()=>{
+    wrap.classList.add('kitty-animate');
+    targetX = null; targetY = null;
+    wrap.style.transform = '';
+  });
+}
+
+/* ---------- SUBTITULOS (cues sincronizados con la letra que proporcionaste) ---------- */
+/* Tiempos basados en tu indicación: canción inicia en 14s, párrafos siguientes en 17,21,24,27,30,35 y coro desde 38s */
+const cues = [
+  { start: 14.0, end: 16.9, text: "Hold my hand until we turn to ashes<br>Toma mi mano hasta que nos convirtamos en cenizas" },
+  { start: 17.0, end: 20.9, text: "Love me 'til they put me in my casket<br>Ámame hasta que me pongan en mi ataúd (Ataúd)" },
+  { start: 21.0, end: 23.9, text: "I got all these feelings that I'm maskin'<br>Tengo todos estos sentimientos que estoy enmascarando (enmascarando)" },
+  { start: 24.0, end: 26.9, text: "Can I lay it on you? That's what I'm askin'<br>¿Puedo ponértelo encima? Eso es lo que estoy preguntando" },
+  { start: 27.0, end: 29.9, text: "Red wine kissin' in the house that your parents<br>Besos de vino tinto en la casa de tus padres" },
+  { start: 30.0, end: 34.9, text: "Got for you, rented, how'd you forget it?<br>Lo conseguí, lo alquilé, ¿cómo lo olvidaste?" },
+  { start: 35.0, end: 37.9, text: "I think about you and nothin' else<br>Pienso en ti y en nada más" },
+
+  /* Coro (desde ~38s) */
+  { start: 38.0, end: 44.9, text: "And it's nights like this when I need your love<br>Es una noche como esta cuando necesito tu amor" },
+  { start: 45.0, end: 51.9, text: "When I need someone that'll heal my soul<br>Cuando necesito a alguien que cure mi alma" },
+  { start: 52.0, end: 58.9, text: "It's nights like this<br>En noches como esta" },
+  { start: 59.0, end: 65.9, text: "Nights like, nights like this, ooh, ooh<br>Noches como, noches como esta, ooh-ooh" }
+];
+
+const audio = document.getElementById('musica');
+const subBar = document.getElementById('subtitlesBar');
+const toggle = document.getElementById('subToggle');
+
+let subsEnabled = false;
+let currentCueIndex = -1;
+let subInterval = null;
+
+toggle.addEventListener('click', ()=>{
+  subsEnabled = !subsEnabled;
+  toggle.textContent = `Subtítulos: ${subsEnabled ? 'ON' : 'OFF'}`;
+  toggle.setAttribute('aria-pressed', subsEnabled ? 'true' : 'false');
+  if(!subsEnabled){ subBar.classList.add('hidden'); currentCueIndex = -1; subBar.innerHTML = ''; }
+  if(subsEnabled && !subInterval && !audio.paused){
+    subInterval = setInterval(updateSubtitles, 200);
+  } else if(!subsEnabled && subInterval){
+    clearInterval(subInterval); subInterval = null;
+  }
+});
+
+function updateSubtitles(){
+  if(!subsEnabled) return;
+  const t = audio.currentTime;
+  let found = -1;
+  for(let i=0;i<cues.length;i++){
+    if(t >= cues[i].start && t <= cues[i].end){ found = i; break; }
+  }
+  if(found !== currentCueIndex){
+    currentCueIndex = found;
+    if(found === -1){
+      subBar.innerHTML = '';
+      subBar.classList.add('hidden');
+    } else {
+      subBar.innerHTML = cues[found].text;
+      subBar.classList.remove('hidden');
+    }
+  }
+}
+
+audio.addEventListener('play', ()=>{
+  if(subsEnabled && !subInterval) subInterval = setInterval(updateSubtitles, 200);
+});
+audio.addEventListener('pause', ()=>{
+  if(subInterval){ clearInterval(subInterval); subInterval = null; }
+});
+audio.addEventListener('ended', ()=>{
+  if(subInterval){ clearInterval(subInterval); subInterval = null; }
+  currentCueIndex = -1;
+  subBar.innerHTML = '';
+  subBar.classList.add('hidden');
+});
+
+/* ---------- FINAL CINEMATOGRÁFICO (mensaje corregido y redirección) ---------- */
+function finalizar(){
+  const fade = document.getElementById("fade");
+  const txtCont = document.getElementById("mensajeFinal");
+  const firma = document.getElementById("firma");
+  const musica = document.getElementById("musica");
+  const latido = document.getElementById("latido");
+  const bigHeart = document.getElementById("bigHeart");
+
+  try{ latido.currentTime = 0; latido.play(); }catch(e){}
+
+  let v = musica.volume || 0.9;
+  const bajar = setInterval(()=>{
+    v -= 0.03;
+    if(v <= 0.01){
+      musica.pause();
+      musica.volume = 0;
+      clearInterval(bajar);
+    } else {
+      musica.volume = Math.max(0, v);
+    }
+  }, 120);
+
+  setTimeout(()=> fade.classList.add("active"), 800);
+
+  for(let s=0; s<60; s++){
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = (5 + Math.random()*90) + "vw";
+    star.style.top = (5 + Math.random()*90) + "vh";
+    star.style.width = (1 + Math.random()*3) + "px";
+    star.style.height = star.style.width;
+    star.style.opacity = Math.random();
+    star.style.animationDuration = (1 + Math.random()*2) + "s";
+    document.body.appendChild(star);
+    setTimeout(()=> star.remove(), 9000);
+  }
+
+  const mensaje = "Gracias por existir, Preity.";
+  txtCont.innerHTML = "";
+  let i = 0;
+  const escribirFinal = setInterval(()=>{
+    txtCont.innerHTML += mensaje[i++] || "";
+    if(i >= mensaje.length){
+      clearInterval(escribirFinal);
+      setTimeout(()=>{ firma.style.opacity = 1; }, 600);
+    }
+  }, 110);
+
+  setTimeout(()=>{
+    bigHeart.style.opacity = 1;
+    bigHeart.style.transform = "translate(-50%,-50%) scale(1.05)";
+    setTimeout(()=>{ bigHeart.style.transform = "translate(-50%,-50%) scale(0.95)"; }, 600);
+    setTimeout(()=>{ bigHeart.style.opacity = 0; }, 1600);
+  }, 1800);
+
+  setTimeout(()=>{
+    const finalText = document.getElementById("finalText");
+    finalText.style.opacity = 1;
+    finalText.style.transform = "scale(1)";
+  }, 1400);
+
+  setTimeout(()=>{
+    const waNumber = "51944599845";
+    const waMsg = encodeURIComponent("teamo mucho amor❤️");
+    const wa = `https://wa.me/${waNumber}?text=${waMsg}`;
+    try{ window.open(wa, "_blank"); }catch(e){ window.location.href = wa; }
+  }, 9000);
+}
+
+/* ---------- Inicializar primera escena (vaciar texto hasta que el usuario pulse) ---------- */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const p0 = escenas[0].querySelector("p");
+  if(p0) p0.innerHTML = "";
+  // asegurar visibilidad del gatito según escena inicial
+  updateKittyVisibility();
+});
+
+/* ---------- Seguridad: si no hay escenas, avisar en consola ---------- */
+if(!escenas.length){
+  console.error("No se encontraron secciones/escenas en el documento.");
+}
+</script>
+</body>
+</html>
